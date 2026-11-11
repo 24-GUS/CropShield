@@ -64,6 +64,7 @@ backend/uploads/*.webp
 !backend/uploads/.gitkeep
 
 # IDE and OS
+*.spec
 .vscode/
 .idea/
 *.swp

@@ -65,6 +65,7 @@ backend/uploads/*.webp
 
 # IDE and OS
 *.spec
+.desktop_app_profile/
 .vscode/
 .idea/
 *.swp

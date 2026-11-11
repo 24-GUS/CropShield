@@ -55,9 +55,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenVoice, onToggleSidebar }) 
             )}
 
             <Link to={role === 'expert' ? '/expert-dashboard' : role === 'admin' ? '/admin-dashboard' : '/dashboard'} className="flex items-center gap-2.5 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-forest-700 to-leaf-500 flex items-center justify-center text-white shadow-md shadow-forest-600/20 group-hover:scale-105 transition-transform">
-                <Sprout className="w-6 h-6" />
-              </div>
+              <img 
+                src="/logo-icon.png" 
+                alt="CropShield AI Logo" 
+                className="w-10 h-10 rounded-xl object-contain shadow-md shadow-forest-600/20 group-hover:scale-105 transition-transform bg-white p-0.5 border border-forest-100" 
+              />
               <div>
                 <span className="font-extrabold text-xl text-forest-950 tracking-tight flex items-center gap-1.5">
                   CropShield <span className="text-forest-600">AI</span>

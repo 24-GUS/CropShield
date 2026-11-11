@@ -88,11 +88,12 @@ export const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-earth-50 flex flex-col justify-center py-10 sm:px-6 lg:px-8">
       {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link to="/" className="inline-flex items-center gap-2.5 group">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-forest-700 to-leaf-500 flex items-center justify-center text-white shadow-lg shadow-forest-600/30 group-hover:scale-105 transition-transform">
-            <Sprout className="w-7 h-7" />
-          </div>
-          <span className="font-extrabold text-2xl text-forest-950 tracking-tight">CropShield AI</span>
+        <Link to="/" className="inline-flex flex-col items-center gap-2 group">
+          <img 
+            src="/logo.png" 
+            alt="CropShield AI" 
+            className="w-44 h-auto max-h-24 object-contain group-hover:scale-105 transition-transform drop-shadow-sm" 
+          />
         </Link>
         <h2 className="mt-4 text-2xl font-bold tracking-tight text-earth-900">
           Sign In to Your Account

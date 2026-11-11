@@ -42,9 +42,11 @@ export const LandingPage: React.FC = () => {
       <header className="border-b border-forest-100 bg-white/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-forest-700 to-leaf-500 flex items-center justify-center text-white shadow-md shadow-forest-600/20">
-              <Sprout className="w-6 h-6" />
-            </div>
+            <img 
+              src="/logo-icon.png" 
+              alt="CropShield AI Logo" 
+              className="w-10 h-10 rounded-xl object-contain shadow-md shadow-forest-600/20 bg-white p-0.5 border border-forest-100" 
+            />
             <div>
               <span className="font-extrabold text-xl text-forest-950 tracking-tight">
                 CropShield <span className="text-forest-600">AI</span>
@@ -77,6 +79,14 @@ export const LandingPage: React.FC = () => {
       {/* Hero Section */}
       <section className="relative pt-12 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
         <div className="text-center max-w-3xl mx-auto">
+          <div className="flex justify-center mb-5">
+            <img 
+              src="/logo.png" 
+              alt="CropShield AI" 
+              className="w-48 sm:w-56 h-auto max-h-28 object-contain drop-shadow-md hover:scale-105 transition-transform" 
+            />
+          </div>
+
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-100/80 border border-forest-200 text-forest-800 text-xs font-semibold mb-6">
             <span className="w-2 h-2 rounded-full bg-forest-600 animate-ping" />
             Hackathon Production Platform for South Indian Agriculture

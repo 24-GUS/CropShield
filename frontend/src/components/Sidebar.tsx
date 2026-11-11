@@ -122,6 +122,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
         {/* Advisory Box at Bottom */}
         <div className="p-3 border-t border-earth-200 bg-earth-50/60">
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <img src="/logo-icon.png" alt="CropShield AI" className="w-5 h-5 rounded-md object-contain" />
+            <span className="text-[11px] font-bold text-forest-950">CropShield AI</span>
+            <span className="text-[10px] text-forest-600 font-semibold bg-forest-100 px-1.5 py-0.2 rounded ml-auto">v1.0</span>
+          </div>
           <div className="bg-forest-50 rounded-xl p-2.5 border border-forest-200 text-xs">
             <div className="flex items-center gap-1.5 font-bold text-forest-800 mb-1">
               <HelpCircle className="w-3.5 h-3.5 text-forest-600" />

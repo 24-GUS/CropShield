@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="frontend/public/logo.png" alt="CropShield AI Logo" width="220" />
+</p>
+
 # CropShield AI
 ### Detect Early. Protect Crops. Empower Farmers.
 

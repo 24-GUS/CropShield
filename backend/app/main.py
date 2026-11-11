@@ -1,5 +1,6 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -55,6 +56,13 @@ app.include_router(consultations.router, prefix=settings.API_V1_STR)
 app.include_router(analytics.router, prefix=settings.API_V1_STR)
 app.include_router(voice.router, prefix=settings.API_V1_STR)
 
+# Frontend Distribution Directory (for zero-dependency standalone hosting)
+frontend_dist_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/dist"))
+if os.path.exists(frontend_dist_dir):
+    assets_dir = os.path.join(frontend_dist_dir, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="frontend-assets")
+
 @app.on_event("startup")
 def startup_event():
     # Automatically verify and seed database if empty
@@ -64,7 +72,11 @@ def startup_event():
         print(f"Startup check: {e}")
 
 @app.get("/")
-def root():
+def root(request: Request):
+    index_file = os.path.join(frontend_dist_dir, "index.html")
+    accept = request.headers.get("accept", "")
+    if os.path.exists(index_file) and ("text/html" in accept or "*/*" in accept):
+        return FileResponse(index_file)
     return {
         "app": settings.PROJECT_NAME,
         "version": settings.VERSION,
@@ -77,3 +89,19 @@ def root():
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy", "service": "CropShield AI Backend API"}
+
+# SPA Fallback Route for Client-Side Routing
+@app.get("/{full_path:path}")
+def serve_spa_route(full_path: str):
+    if full_path.startswith("api/") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+        raise HTTPException(status_code=404, detail="Endpoint not found")
+    
+    file_path = os.path.join(frontend_dist_dir, full_path)
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    
+    index_file = os.path.join(frontend_dist_dir, "index.html")
+    if os.path.isfile(index_file):
+        return FileResponse(index_file)
+    
+    raise HTTPException(status_code=404, detail="Page not found")

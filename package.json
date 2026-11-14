@@ -1,0 +1,25 @@
+{
+  "name": "cropshield-ai",
+  "version": "1.0.0",
+  "description": "AI-Powered Early Crop Disease Detection, Prediction and Agricultural Assistance Platform",
+  "scripts": {
+    "start:backend": "python -m uvicorn app.main:app --app-dir backend --reload --port 8000",
+    "start:frontend": "npm run dev --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend",
+    "test:backend": "python -m pytest tests/test_api.py -v",
+    "train:model": "python -m app.ml.train_pipeline --app-dir backend"
+  },
+  "keywords": [
+    "cropshield",
+    "agriculture",
+    "ai",
+    "plant-disease-detection",
+    "mobilenetv2",
+    "karnataka",
+    "kerala",
+    "fastapi",
+    "react"
+  ],
+  "author": "CropShield AI Engineering Team",
+  "license": "MIT"
+}

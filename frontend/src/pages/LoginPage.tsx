@@ -22,7 +22,7 @@ export const LoginPage: React.FC = () => {
   const location = useLocation();
 
   const [email, setEmail] = useState('farmer@cropshield.org');
-  const [password, setPassword] = useState('farmer123');
+  const [password, setPassword] = useState('Farmer@123');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState<string | null>(null);

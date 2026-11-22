@@ -9,8 +9,10 @@ import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
 import { VoiceAssistantModal } from './components/VoiceAssistantModal';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { LegalConsentBanner } from './components/LegalConsentBanner';
+import { Footer } from './components/Footer';
 
-// 18 Required Pages
+// Application Pages
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
@@ -30,19 +32,27 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { ModelPerformancePage } from './pages/ModelPerformancePage';
 import { SettingsPage } from './pages/SettingsPage';
 
+// Legal & Compliance Pages
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { RegulatoryCompliancePage } from './pages/RegulatoryCompliancePage';
+
 // Layout wrapper for application views
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceOpen, setVoiceOpen] = useState(false);
   const location = useLocation();
 
-  // Hide sidebar/navbar on landing, login, and registration pages
-  const isAuthOrLanding = ['/', '/login', '/register'].includes(location.pathname);
+  // Hide sidebar/navbar on landing, auth, and standalone public legal pages
+  const isPublicStandalone = ['/', '/login', '/register', '/terms', '/privacy', '/compliance'].includes(location.pathname);
 
-  if (isAuthOrLanding) {
+  if (isPublicStandalone) {
     return (
       <div className="min-h-screen bg-earth-50 flex flex-col selection:bg-forest-200">
-        {children}
+        <div className="flex-1">
+          {children}
+        </div>
+        {location.pathname !== '/' && <Footer />}
       </div>
     );
   }
@@ -60,8 +70,11 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
         {/* Main Content Area */}
-        <main className="flex-1 lg:pl-64 p-4 sm:p-6 lg:p-8 min-w-0">
-          {children}
+        <main className="flex-1 lg:pl-64 p-4 sm:p-6 lg:p-8 min-w-0 flex flex-col">
+          <div className="flex-1">
+            {children}
+          </div>
+          <Footer />
         </main>
       </div>
 
@@ -84,10 +97,13 @@ export const App: React.FC = () => {
         <LanguageProvider>
           <AppLayout>
             <Routes>
-              {/* Public Marketing & Auth Pages */}
+              {/* Public Marketing, Auth & Legal Compliance Pages */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/terms" element={<TermsOfServicePage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/compliance" element={<RegulatoryCompliancePage />} />
 
               {/* Protected Farmer & General Access Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><FarmerDashboard /></ProtectedRoute>} />
@@ -118,6 +134,8 @@ export const App: React.FC = () => {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AppLayout>
+          {/* Statutory Legal Consent Banner */}
+          <LegalConsentBanner />
         </LanguageProvider>
       </AuthProvider>
     </BrowserRouter>

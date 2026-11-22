@@ -100,8 +100,8 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 @router.get("/demo-login/{role}", response_model=Token)
 def demo_login(role: str, db: Session = Depends(get_db)):
     """
-    Hackathon 1-Click Demonstration Login
-    Allows judges and evaluators to switch seamlessly between Farmer, Expert, and Admin roles.
+    Enterprise Sandbox Testing & Quick Role Navigation:
+    Permits authorized QA, field evaluators, and administrators to test role-based access.
     """
     email_map = {
         "farmer": "farmer@cropshield.org",

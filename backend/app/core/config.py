@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 
-    # Database: SQLite by default for zero-setup local & hackathon execution; PostgreSQL / Supabase URI via env
+    # Database: SQLite by default for zero-setup local execution; PostgreSQL / Supabase URI via env in production
     DATABASE_URL: str = os.getenv("DATABASE_URL", DEFAULT_DB_URL)
 
     # CORS settings

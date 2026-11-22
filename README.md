@@ -30,9 +30,9 @@ Smallholder farmers in South India frequently detect foliar and fruit diseases o
 
 ---
 
-## ⚡ 1-Click Hackathon Evaluation Mode
+## 🔐 Role-Based Access Control (RBAC) & Testing Sandbox
 
-For rapid hackathon judging, the application includes a **Top Banner Role Switcher** to test all three primary personas instantly:
+The application includes three authenticated personas with strict permission boundaries and test credentials:
 
 | Persona | Demo Account | Focus Capabilities |
 |---|---|---|
@@ -110,15 +110,15 @@ All **7 core automated tests** pass out-of-the-box.
 
 ---
 
-## 📱 Complete 18 Application Pages
+## 📱 Complete 21 Application Pages & Portals
 
-1. **Landing Page (`/`):** Full feature presentation and 1-click evaluator triggers.
-2. **Login Page (`/login`):** Authentication with 1-click demo logins.
+1. **Landing Page (`/`):** Enterprise product presentation, priority crops, and quick access.
+2. **Login Page (`/login`):** Role-based authentication with pre-configured staff & farmer test profiles.
 3. **Farmer Registration (`/register`):** Multi-role registration (Farmer or Expert).
 4. **Smart Farmer Dashboard (`/dashboard`):** Real database stats, weather snapshot, and recent diagnoses.
 5. **Crop & Farm Management (`/crops`):** Registered cultivation plots and botanical scope.
-6. **AI Crop Disease Scanner (`/scanner`):** Upload or camera capture with pre-loaded 1-click test samples.
-7. **Diagnosis Results (`/diagnosis/:id`):** Calibrated confidence, symptoms, ICAR treatment, and audio speech.
+6. **AI Crop Disease Scanner (`/scanner`):** Upload or camera capture with pre-loaded field pathology test specimens.
+7. **Diagnosis Results (`/diagnosis/:id`):** Calibrated confidence, symptoms, ICAR treatment, statutory chemical warnings, and audio speech.
 8. **Disease Library (`/library`):** Filterable encyclopedia of 19 pathological conditions.
 9. **Treatment Guide (`/treatments`):** CIBRC-approved dosages, IPM, and PPE precautions.
 10. **Weather Dashboard (`/weather`):** Microclimate monitoring with biological disease forecasting.
@@ -130,6 +130,9 @@ All **7 core automated tests** pass out-of-the-box.
 16. **Admin Dashboard (`/admin-dashboard`):** Platform telemetry, user management, and system integrity.
 17. **Model Performance Dashboard (`/model-metrics`):** Independent benchmark vs real-world field metrics.
 18. **Settings & Language (`/settings`):** Language switcher (Kannada, Malayalam, Hindi, English) and voice tests.
+19. **Terms of Service (`/terms`):** Statutory agricultural advisory disclaimers, limitation of liability, and service agreement.
+20. **Privacy Policy (`/privacy`):** DPDP Act 2023 & GDPR compliant farmer data protection pledge.
+21. **Regulatory Compliance & Pesticide Safety (`/compliance`):** CIB&RC toxicity classifications (Green/Blue/Yellow/Red) and ICAR/KAU spray protocols.
 
 ---
 

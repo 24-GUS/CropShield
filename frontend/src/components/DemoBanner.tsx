@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { ShieldCheck, UserCheck, ShieldAlert, Sparkles } from 'lucide-react';
+import { ShieldCheck, UserCheck, Sparkles } from 'lucide-react';
 import { UserRole } from '../types';
 
 export const DemoBanner: React.FC = () => {
@@ -22,17 +22,17 @@ export const DemoBanner: React.FC = () => {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-leaf-500"></span>
           </span>
           <span className="font-semibold tracking-wide flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-leaf-300" />
-            Hackathon Live Evaluation Mode:
+            <ShieldCheck className="w-3.5 h-3.5 text-leaf-300" />
+            Enterprise QA Sandbox Environment:
           </span>
           <span className="hidden sm:inline text-forest-200">
-            Active: <strong className="text-white capitalize">{role}</strong> ({user?.full_name || 'Demo User'})
+            Active Persona: <strong className="text-white capitalize">{role}</strong> ({user?.full_name || 'Staff User'})
           </span>
         </div>
 
-        {/* 1-Click Role Switcher */}
+        {/* Role Switcher */}
         <div className="flex items-center gap-1.5 bg-forest-950/60 p-1 rounded-lg border border-forest-700/60">
-          <span className="text-[10px] text-forest-300 font-medium px-1.5 hidden md:inline">Quick Switch:</span>
+          <span className="text-[10px] text-forest-300 font-medium px-1.5 hidden md:inline">Simulate Role:</span>
           
           <button
             onClick={() => handleRoleChange('farmer')}
@@ -69,7 +69,7 @@ export const DemoBanner: React.FC = () => {
                 : 'text-forest-200 hover:text-white hover:bg-forest-800'
             }`}
           >
-            <ShieldAlert className="w-3 h-3" />
+            <Sparkles className="w-3 h-3" />
             Admin
           </button>
         </div>

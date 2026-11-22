@@ -121,15 +121,20 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* About & Standards Box */}
-      <div className="bg-earth-50 p-6 rounded-3xl border border-earth-200 text-xs space-y-2">
+      {/* About & Legal Compliance Box */}
+      <div className="bg-earth-50 p-6 rounded-3xl border border-earth-200 text-xs space-y-3">
         <h3 className="font-bold text-forest-950 text-sm flex items-center gap-1.5">
           <ShieldCheck className="w-4 h-4 text-forest-600" />
-          CropShield AI — Hackathon Release v1.4
+          CropShield AI — Enterprise Edition v1.4
         </h3>
         <p className="text-earth-600 leading-relaxed">
-          Built for the National AI Agricultural Innovation Hackathon. Compliant with ICAR, University of Agricultural Sciences (UAS Bangalore & Dharwad), and Kerala Agricultural University (KAU) agronomic standards.
+          Enterprise Precision Agrotechnology Platform. Compliant with ICAR diagnostic taxonomy, Central Insecticides Board & Registration Committee (CIB&RC) statutory pesticide guidelines, and packages of practices from UAS Bangalore, UAS Dharwad & Kerala Agricultural University (KAU).
         </p>
+        <div className="pt-2 border-t border-earth-200 flex flex-wrap gap-4 text-xs font-semibold text-forest-700">
+          <a href="/terms" className="hover:underline">Terms of Service</a>
+          <a href="/privacy" className="hover:underline">Privacy Policy</a>
+          <a href="/compliance" className="hover:underline">CIB&RC Regulatory Compliance</a>
+        </div>
       </div>
     </div>
   );

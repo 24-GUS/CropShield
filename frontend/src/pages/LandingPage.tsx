@@ -64,14 +64,13 @@ export const LandingPage: React.FC = () => {
             >
               Sign In
             </Link>
-            <button
-              onClick={() => handleLaunch('farmer', '/dashboard')}
-              disabled={isLoading}
+            <Link
+              to="/register"
               className="px-4 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold text-xs sm:text-sm shadow-md shadow-forest-600/20 transition-all flex items-center gap-1.5"
             >
-              <Sparkles className="w-4 h-4 text-leaf-300" />
-              <span>Launch Demo</span>
-            </button>
+              <Sprout className="w-4 h-4 text-leaf-300" />
+              <span>Register Farmer</span>
+            </Link>
           </div>
         </div>
       </header>
@@ -89,7 +88,7 @@ export const LandingPage: React.FC = () => {
 
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-100/80 border border-forest-200 text-forest-800 text-xs font-semibold mb-6">
             <span className="w-2 h-2 rounded-full bg-forest-600 animate-ping" />
-            Hackathon Production Platform for South Indian Agriculture
+            Enterprise Precision Agrotechnology & Disease Diagnostic Platform
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-forest-950 tracking-tight leading-[1.15]">
@@ -230,16 +229,29 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-forest-950 text-forest-200 py-10 px-4 sm:px-6 lg:px-8 border-t border-forest-900 text-xs">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Sprout className="w-5 h-5 text-leaf-400" />
-            <span className="font-bold text-sm text-white">CropShield AI</span>
-            <span className="text-forest-400">— Hackathon Production Release 2025</span>
+      <footer className="bg-forest-950 text-forest-200 py-12 px-4 sm:px-6 lg:px-8 border-t border-forest-900 text-xs">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <Sprout className="w-5 h-5 text-leaf-400" />
+              <span className="font-bold text-base text-white">CropShield AI</span>
+              <span className="text-forest-400 text-xs">— Enterprise Edition v1.4</span>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-5 text-xs text-forest-300">
+              <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+              <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link to="/compliance" className="hover:text-white transition-colors">CIB&RC & Pesticide Safety</Link>
+              <Link to="/model-metrics" className="hover:text-white transition-colors">Model Benchmarks</Link>
+            </div>
           </div>
-          <p className="text-forest-400 text-center sm:text-right">
-            Grounding Source: ICAR, UAS Bangalore, UAS Dharwad & Kerala Agricultural University.
-          </p>
+          <div className="pt-6 border-t border-forest-900/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-forest-400">
+            <p>
+              Statutory Grounding: ICAR, UAS Bangalore, UAS Dharwad & Kerala Agricultural University Package of Practices.
+            </p>
+            <p>
+              © {new Date().getFullYear()} CropShield AI Technologies. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
     </div>

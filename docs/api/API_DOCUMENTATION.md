@@ -39,7 +39,7 @@ Creates a new user account (Farmer, Agricultural Expert, or Administrator).
 ```
 
 ### `GET /auth/demo-login/{role}`
-Instant 1-click authentication for hackathon evaluation:
+Quick role-based access for sandbox testing:
 - Roles: `farmer`, `expert`, `admin`.
 
 ---

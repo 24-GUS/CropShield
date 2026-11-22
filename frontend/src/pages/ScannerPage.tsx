@@ -336,17 +336,17 @@ export const ScannerPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: 1-Click Benchmark Samples for Hackathon Judges */}
+        {/* Right Column: Standard Field Pathology Specimens */}
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-forest-200 shadow-soft">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="w-4 h-4 text-forest-600" />
               <h3 className="text-sm font-bold text-forest-950 uppercase tracking-wider">
-                1-Click Benchmark Samples
+                Field Pathology Specimens
               </h3>
             </div>
             <p className="text-xs text-earth-500 mb-4 leading-relaxed">
-              Click any verified specimen below to load and test the calibrated model inference instantly:
+              Select any pre-validated field specimen below to test the calibrated botanical inference engine:
             </p>
 
             <div className="space-y-2 max-h-[520px] overflow-y-auto pr-1">

@@ -15,7 +15,7 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     // Brand & Header
     appName: "CropShield AI",
     tagline: "Detect Early. Protect Crops. Empower Farmers.",
-    switchRole: "Demo Role Switcher",
+    switchRole: "Role Profile",
     farmer: "Farmer",
     expert: "Agricultural Expert",
     admin: "Admin",
@@ -95,7 +95,7 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     // Brand & Header
     appName: "ಕ್ರಾಪ್‌ಶೀಲ್ಡ್ AI",
     tagline: "ಮುಂಚಿತವಾಗಿಯೇ ಪತ್ತೆಹಚ್ಚಿ. ಬೆಳೆಗಳನ್ನು ರಕ್ಷಿಸಿ. ರೈತರನ್ನು ಸಶಕ್ತಗೊಳಿಸಿ.",
-    switchRole: "ಡೆಮೊ ಖಾತೆ ಬದಲಾವಣೆ",
+    switchRole: "ಖಾತೆ ಪ್ರಕಾರ",
     farmer: "ರೈತರು",
     expert: "ಕೃಷಿ ತಜ್ಞರು",
     admin: "ನಿರ್ವಾಹಕರು",
@@ -175,7 +175,7 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     // Brand & Header
     appName: "ക്രോപ്പ്ഷീൽഡ് AI",
     tagline: "നേരത്തെ തിരിച്ചറിയുക. വിളകളെ സംരക്ഷിക്കുക. കർഷകരെ ശാക്തീകരിക്കുക.",
-    switchRole: "ഡെമോ റോൾ മാറ്റുക",
+    switchRole: "റോൾ പ്രൊഫൈൽ",
     farmer: "കർഷകൻ",
     expert: "കൃഷി വിദഗ്ദ്ധൻ",
     admin: "അഡ്മിൻ",
@@ -255,7 +255,7 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     // Brand & Header
     appName: "क्रॉपशील्ड AI",
     tagline: "समय पर पहचानें। फसलों को बचाएं। किसानों को सशक्त बनाएं।",
-    switchRole: "डेमो भूमिका बदलें",
+    switchRole: "भूमिका प्रोफाइल",
     farmer: "किसान",
     expert: "कृषि विशेषज्ञ",
     admin: "प्रशासक",

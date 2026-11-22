@@ -22,8 +22,12 @@ export const resolveImageUrl = (url?: string): string => {
   if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
     return url;
   }
-  const backendBase = 'http://127.0.0.1:8000';
   const clean = url.startsWith('/') ? url : `/${url}`;
+  const backendBase = import.meta.env.VITE_BACKEND_URL || (
+    typeof window !== 'undefined' && (window.location.port === '8000' || !window.location.port)
+      ? ''
+      : 'http://127.0.0.1:8000'
+  );
   return `${backendBase}${clean}`;
 };
 

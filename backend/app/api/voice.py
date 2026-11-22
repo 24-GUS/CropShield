@@ -1,6 +1,9 @@
-from fastapi import APIRouter, Depends, Query, Body
+from fastapi import APIRouter, Depends, Query, Body, HTTPException
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import Dict, Any, Optional
+import io
+import os
 from app.database.session import get_db
 from app.database.models import Crop, CropDisease
 
@@ -127,3 +130,51 @@ def process_voice_query(
         "requires_photo": True,
         "grounding_source": "ICAR-IIHR / ICAR-CPCRI / KAU Package of Practices"
     }
+
+@router.get("/tts")
+def text_to_speech(
+    text: str = Query(..., min_length=1, max_length=2000, description="Text to synthesize into speech"),
+    language: str = Query("en", description="Language code: en, kn, ml, hi")
+):
+    """
+    High-Fidelity Text-to-Speech Audio Stream:
+    Produces natural, audible speech for diagnosis reports, symptoms, and treatment instructions.
+    Supports English (en), Kannada (kn), Malayalam (ml), and Hindi (hi).
+    """
+    lang_code = language.lower() if language.lower() in ["en", "kn", "ml", "hi"] else "en"
+    clean_text = text.strip()[:1000]
+
+    # Primary: gTTS for natural neural-like voice
+    try:
+        from gtts import gTTS
+        tts = gTTS(text=clean_text, lang=lang_code, slow=False)
+        fp = io.BytesIO()
+        tts.write_to_fp(fp)
+        fp.seek(0)
+        return StreamingResponse(
+            fp, 
+            media_type="audio/mpeg",
+            headers={"Content-Disposition": "inline; filename=speech.mp3"}
+        )
+    except Exception as e:
+        # Fallback: pyttsx3 for offline / local synthesis
+        try:
+            import pyttsx3
+            import tempfile
+            engine = pyttsx3.init()
+            engine.setProperty('rate', 150)
+            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+                tmp_path = tmp.name
+            engine.save_to_file(clean_text, tmp_path)
+            engine.runAndWait()
+            with open(tmp_path, "rb") as f:
+                data = f.read()
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+            return StreamingResponse(
+                io.BytesIO(data), 
+                media_type="audio/wav",
+                headers={"Content-Disposition": "inline; filename=speech.wav"}
+            )
+        except Exception as e2:
+            raise HTTPException(status_code=500, detail=f"Text-to-speech synthesis failed: {str(e)} | fallback: {str(e2)}")

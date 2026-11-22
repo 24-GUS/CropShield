@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Language } from '../types';
 
 interface LanguageContextType {
@@ -341,6 +341,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return (saved as Language) || 'en';
   });
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
@@ -352,34 +353,132 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const stopSpeaking = () => {
-    if ('speechSynthesis' in window) {
+    // Stop HTML5 audio element if playing
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current.src = '';
+      } catch (e) {
+        // ignore
+      }
+      audioRef.current = null;
+    }
+
+    // Stop browser Web Speech Synthesis
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    setIsSpeaking(false);
+  };
+
+  const playBrowserSpeechFallback = (cleanText: string, targetLang: Language) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      setIsSpeaking(false);
+      return;
+    }
+
+    try {
       window.speechSynthesis.cancel();
+      window.speechSynthesis.resume();
+
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      const langCodes: Record<Language, string> = {
+        en: 'en-IN',
+        kn: 'kn-IN',
+        ml: 'ml-IN',
+        hi: 'hi-IN'
+      };
+      utterance.lang = langCodes[targetLang] || 'en-IN';
+      utterance.rate = 0.95;
+
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        const matchedVoice = voices.find(v => v.lang.toLowerCase().startsWith(targetLang)) ||
+                             voices.find(v => v.lang.toLowerCase().includes('in')) ||
+                             voices.find(v => v.lang.toLowerCase().startsWith('en')) ||
+                             voices[0];
+        if (matchedVoice) {
+          utterance.voice = matchedVoice;
+        }
+      }
+
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = (e) => {
+        console.warn('Browser speech synthesis error:', e);
+        setIsSpeaking(false);
+      };
+
+      setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+      }, 50);
+    } catch (err) {
+      console.warn('Speech synthesis exception:', err);
       setIsSpeaking(false);
     }
   };
 
   const speak = (text: string, customLang?: Language) => {
-    if (!('speechSynthesis' in window)) return;
     stopSpeaking();
 
+    if (!text || !text.trim()) return;
+
+    // Clean text: strip markdown asterisks, brackets, hashes, bullet points
+    const clean = text
+      .replace(/[*#_~`\[\]()]/g, ' ')
+      .replace(/@\s*[\d.]+\s*(?:g|ml)\/L/gi, '') // simplify chemical measurement jargon for natural speech
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!clean) return;
+
+    // Cap speech text length to avoid buffering latency
+    const speechText = clean.length > 500 ? clean.substring(0, 500) + '...' : clean;
     const targetLang = customLang || language;
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Select best matching voice tag
-    const langCodes: Record<Language, string> = {
-      en: 'en-IN',
-      kn: 'kn-IN',
-      ml: 'ml-IN',
-      hi: 'hi-IN'
-    };
-    utterance.lang = langCodes[targetLang] || 'en-IN';
-    utterance.rate = 0.95;
 
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    // Determine backend audio URL
+    const apiBase = typeof window !== 'undefined' && (window.location.port === '8000' || !window.location.port)
+      ? '/api/v1'
+      : 'http://127.0.0.1:8000/api/v1';
 
-    window.speechSynthesis.speak(utterance);
+    const audioUrl = `${apiBase}/voice/tts?text=${encodeURIComponent(speechText)}&language=${targetLang}`;
+
+    try {
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+
+      audio.onplay = () => {
+        setIsSpeaking(true);
+      };
+
+      audio.onended = () => {
+        setIsSpeaking(false);
+        audioRef.current = null;
+      };
+
+      audio.onerror = (e) => {
+        console.warn('Backend audio streaming error, falling back to Web Speech API:', e);
+        audioRef.current = null;
+        playBrowserSpeechFallback(speechText, targetLang);
+      };
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('Audio play was prevented or failed, trying Web Speech API:', err);
+          audioRef.current = null;
+          playBrowserSpeechFallback(speechText, targetLang);
+        });
+      }
+    } catch (e) {
+      playBrowserSpeechFallback(speechText, targetLang);
+    }
   };
 
   return (

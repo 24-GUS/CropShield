@@ -9,11 +9,11 @@ class ImageQualityChecker:
     Validates input image quality, resolution, blurriness, and botanical/plant relevance.
     Prevents diagnosing non-plants, dark/blank images, or severely blurred photos.
     """
-    MIN_WIDTH = 120
-    MIN_HEIGHT = 120
-    BLUR_THRESHOLD = 45.0  # Laplacian variance threshold
-    MIN_GREEN_RATIO = 0.08  # Minimum vegetation/chlorophyll pixel ratio
-    MIN_CONTRAST = 18.0
+    MIN_WIDTH = 100
+    MIN_HEIGHT = 100
+    BLUR_THRESHOLD = 4.0  # Laplacian variance threshold (supports natural mobile macro focus)
+    MIN_GREEN_RATIO = 0.07  # Minimum vegetation/chlorophyll pixel ratio
+    MIN_CONTRAST = 10.0
 
     @classmethod
     def check_image(cls, image_bytes: bytes) -> Tuple[bool, str, Dict[str, Any]]:
@@ -77,14 +77,15 @@ class ImageQualityChecker:
             h = hsv[:, :, 0]
             s = hsv[:, :, 1]
 
-            # Excess Green Index: 2G - R - B (must have non-gray saturation)
+            # Excess Green Index: 2G - R - B
             exg = 2 * g - r - b
-            green_foliage_mask = (exg > 15) & (s > 35) & (g > 40)
+            # Authentic green botanical foliage (H between 24 and 85, S > 25, V > 25)
+            green_foliage_mask = (h >= 24) & (h <= 85) & (s > 25) & (img_arr[:, :, 2] < 220)
 
-            # Necrotic/diseased leaf tissue (yellow/brown spots): Hue between 12 and 40 with saturation > 40
-            necrotic_foliage_mask = ((h >= 12) & (h <= 42)) & (s > 45) & (r > g) & (g > b)
+            # Chlorotic / diseased leaf tissue (yellow/brown margins and halos)
+            chlorosis_mask = (h >= 12) & (h < 24) & (s > 40) & (exg > 0)
 
-            combined_plant_mask = green_foliage_mask | necrotic_foliage_mask
+            combined_plant_mask = green_foliage_mask | chlorosis_mask
             plant_ratio = np.sum(combined_plant_mask) / (width * height)
 
             if plant_ratio < cls.MIN_GREEN_RATIO:

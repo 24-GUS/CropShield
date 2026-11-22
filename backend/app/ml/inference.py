@@ -79,27 +79,91 @@ class DiseasePredictor:
 
         # Step 4: Calibrated Probability Prediction
         probabilities = self.model.predict_proba(feat_arr)[0]
-        top_indices = np.argsort(probabilities)[::-1]
-
-        top1_idx = int(top_indices[0])
-        top1_class = CLASSES[top1_idx]
-        top1_prob = float(probabilities[top1_idx])
-
-        # Top-3 predictions
-        top3_predictions = []
-        for idx in top_indices[:3]:
-            top3_predictions.append({
-                "class_code": CLASSES[int(idx)],
-                "confidence": round(float(probabilities[int(idx)]), 4),
-                "confidence_pct": round(float(probabilities[int(idx)]) * 100, 2)
-            })
-
-        # Calculate prediction entropy as an uncertainty metric
         entropy = -np.sum(probabilities * np.log(probabilities + 1e-9))
 
-        # Step 5: Confidence & Uncertainty Thresholding (Scientific Abstention)
-        # Threshold: < 0.65 -> Abstain
-        if top1_prob < 0.65 or entropy > 1.8:
+        # Determine crop candidate classes if selected_crop_name is specified
+        candidate_classes = None
+        if selected_crop_name:
+            for crop_name, disease_list in CROP_CLASS_MAP.items():
+                if crop_name.lower() == selected_crop_name.lower():
+                    candidate_classes = disease_list
+                    selected_crop_name = crop_name
+                    break
+
+        if candidate_classes:
+            # Condition probabilities on candidate diseases of the selected crop
+            cand_indices = [CLASSES.index(c) for c in candidate_classes if c in CLASSES]
+            crop_prob_sum = float(sum(probabilities[idx] for idx in cand_indices))
+
+            # Check if there is an extreme crop mismatch
+            global_top_idx = int(np.argmax(probabilities))
+            global_top_class = CLASSES[global_top_idx]
+            global_top_prob = float(probabilities[global_top_idx])
+
+            global_crop = None
+            for cname, dlist in CROP_CLASS_MAP.items():
+                if global_top_class in dlist:
+                    global_crop = cname
+                    break
+
+            if crop_prob_sum < 0.08 and global_top_prob > 0.85 and global_crop and global_crop.lower() != selected_crop_name.lower():
+                return {
+                    "status": "crop_mismatch",
+                    "success": True,
+                    "selected_crop": selected_crop_name,
+                    "detected_crop": global_crop,
+                    "disease_code": global_top_class,
+                    "confidence": round(global_top_prob, 4),
+                    "message": (
+                        f"Selected crop is '{selected_crop_name}', but the photograph appears to be '{global_crop}'. "
+                        f"Please confirm the crop selection or upload the photograph corresponding to {selected_crop_name}."
+                    ),
+                    "top3_predictions": [
+                        {"class_code": global_top_class, "confidence": round(global_top_prob, 4), "confidence_pct": round(global_top_prob * 100, 2)}
+                    ],
+                    "requires_expert": False
+                }
+
+            # Normalize probabilities across candidate diseases
+            eps = 1e-7
+            normalized_crop_mass = max(crop_prob_sum, eps)
+            cand_probs = [(c, float(probabilities[CLASSES.index(c)] / normalized_crop_mass)) for c in candidate_classes if c in CLASSES]
+            cand_probs.sort(key=lambda x: x[1], reverse=True)
+
+            top1_class = cand_probs[0][0]
+            top1_prob = cand_probs[0][1]
+            detected_crop = selected_crop_name
+
+            top3_predictions = [
+                {
+                    "class_code": c,
+                    "confidence": round(p, 4),
+                    "confidence_pct": round(p * 100, 2)
+                }
+                for c, p in cand_probs[:3]
+            ]
+        else:
+            top_indices = np.argsort(probabilities)[::-1]
+            top1_idx = int(top_indices[0])
+            top1_class = CLASSES[top1_idx]
+            top1_prob = float(probabilities[top1_idx])
+            detected_crop = None
+            for crop_name, disease_list in CROP_CLASS_MAP.items():
+                if top1_class in disease_list:
+                    detected_crop = crop_name
+                    break
+
+            top3_predictions = [
+                {
+                    "class_code": CLASSES[int(idx)],
+                    "confidence": round(float(probabilities[int(idx)]), 4),
+                    "confidence_pct": round(float(probabilities[int(idx)]) * 100, 2)
+                }
+                for idx in top_indices[:3]
+            ]
+
+        # Step 5: Scientific Abstention Threshold
+        if top1_prob < 0.35:
             return {
                 "status": "uncertain_prediction",
                 "success": True,
@@ -116,33 +180,27 @@ class DiseasePredictor:
                 "requires_expert": True
             }
 
-        # Step 6: Crop Consistency Validation
-        detected_crop = None
-        for crop_name, disease_list in CROP_CLASS_MAP.items():
-            if top1_class in disease_list:
-                detected_crop = crop_name
-                break
-
-        if selected_crop_name and detected_crop and selected_crop_name.lower() != detected_crop.lower():
-            # If farmer selected Paddy, but image is Tomato
-            return {
-                "status": "crop_mismatch",
-                "success": True,
-                "selected_crop": selected_crop_name,
-                "detected_crop": detected_crop,
-                "disease_code": top1_class,
-                "confidence": round(top1_prob, 4),
-                "message": (
-                    f"Selected crop is '{selected_crop_name}', but the photograph appears to be '{detected_crop}'. "
-                    f"Please confirm the crop selection or upload the photograph corresponding to {selected_crop_name}."
-                ),
-                "top3_predictions": top3_predictions,
-                "requires_expert": False
-            }
-
-        # Step 7: Confidence Qualification
-        confidence_level = "High" if top1_prob >= 0.85 else "Moderate"
+        # Step 6: Confidence Qualification & Advanced Clinical Diagnosis
+        confidence_level = "High" if top1_prob >= 0.70 else "Moderate"
         is_healthy = "healthy" in top1_class
+
+        # Determine Advanced Pathology Indicators
+        if is_healthy:
+            pathology_stage = "Healthy Botanical Tissue"
+            treatment_urgency = "Routine Preventive Maintenance"
+            severity_code = "None"
+        elif "blight" in top1_class or "koleroga" in top1_class or "rot" in top1_class or "wilt" in top1_class:
+            pathology_stage = "Active Necrotic / Pathogen Infection"
+            treatment_urgency = "Immediate Intervention (Within 24-48 Hours)"
+            severity_code = "High"
+        elif "virus" in top1_class:
+            pathology_stage = "Systemic Viral / Vector Infestation"
+            treatment_urgency = "Immediate Vector Quarantine"
+            severity_code = "Severe"
+        else:
+            pathology_stage = "Early Foliar Lesion Development"
+            treatment_urgency = "Prompt Protective Spray Recommended"
+            severity_code = "Moderate"
 
         return {
             "status": "completed",
@@ -154,6 +212,9 @@ class DiseasePredictor:
             "confidence_pct": round(top1_prob * 100, 1),
             "confidence_level": confidence_level,
             "uncertainty_entropy": round(float(entropy), 3),
+            "pathology_stage": pathology_stage,
+            "treatment_urgency": treatment_urgency,
+            "severity_code": severity_code,
             "top3_predictions": top3_predictions,
             "quality_details": quality_details,
             "requires_expert": confidence_level == "Moderate"

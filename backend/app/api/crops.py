@@ -58,11 +58,19 @@ def get_all_diseases(
     search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
+    # Sanitize literal 'undefined' or 'null' sent by client-side URLSearchParams
+    if crop_name in ["undefined", "null", ""]:
+        crop_name = None
+    if severity in ["undefined", "null", ""]:
+        severity = None
+    if search in ["undefined", "null", ""]:
+        search = None
+
     query = db.query(CropDisease).join(Crop)
     if crop_name:
         query = query.filter(Crop.name.ilike(f"%{crop_name}%"))
     if severity:
-        query = query.filter(CropDisease.severity_level == severity)
+        query = query.filter(CropDisease.severity_level.ilike(f"%{severity}%"))
     if search:
         query = query.filter(
             (CropDisease.disease_name.ilike(f"%{search}%")) |

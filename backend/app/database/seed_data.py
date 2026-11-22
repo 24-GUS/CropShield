@@ -750,7 +750,7 @@ def seed_database():
             demo_admin = User(
                 email="admin@cropshield.org",
                 hashed_password=get_password_hash("Admin@123"),
-                full_name="CropShield Administrator",
+                full_name="Dr. K. Srinivas",
                 phone="+91 80234 56789",
                 role="admin",
                 language_pref="en",

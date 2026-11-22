@@ -17,6 +17,16 @@ export const removeAuthToken = (): void => {
   localStorage.removeItem('cropshield_user');
 };
 
+export const resolveImageUrl = (url?: string): string => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
+    return url;
+  }
+  const backendBase = 'http://127.0.0.1:8000';
+  const clean = url.startsWith('/') ? url : `/${url}`;
+  return `${backendBase}${clean}`;
+};
+
 const getHeaders = (isMultipart: boolean = false): HeadersInit => {
   const headers: Record<string, string> = {};
   if (!isMultipart) {
@@ -71,8 +81,18 @@ export const cropsApi = {
   getAllCrops: () => apiRequest<any[]>('/crops'),
   getCropById: (id: number) => apiRequest<any>(`/crops/${id}`),
   getAllDiseases: (params?: { crop_name?: string; severity?: string; search?: string }) => {
-    const q = new URLSearchParams(params as any).toString();
-    return apiRequest<any[]>(`/crops/diseases/all?${q}`);
+    const searchParams = new URLSearchParams();
+    if (params?.crop_name && params.crop_name !== 'undefined' && params.crop_name.trim()) {
+      searchParams.append('crop_name', params.crop_name.trim());
+    }
+    if (params?.severity && params.severity !== 'undefined' && params.severity.trim()) {
+      searchParams.append('severity', params.severity.trim());
+    }
+    if (params?.search && params.search !== 'undefined' && params.search.trim()) {
+      searchParams.append('search', params.search.trim());
+    }
+    const q = searchParams.toString();
+    return apiRequest<any[]>(`/crops/diseases/all${q ? `?${q}` : ''}`);
   },
   getDiseaseById: (id: number) => apiRequest<any>(`/crops/diseases/${id}`),
   getFarms: () => apiRequest<any[]>('/crops/farms'),

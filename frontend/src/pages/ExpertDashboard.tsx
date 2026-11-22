@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { analyticsApi, scansApi, consultationApi } from '../services/api';
+import { analyticsApi, scansApi, consultationApi, resolveImageUrl } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import {
   ShieldCheck,
@@ -163,12 +163,9 @@ export const ExpertDashboard: React.FC = () => {
               >
                 <div>
                   <img
-                    src={scan.image_url}
+                    src={resolveImageUrl(scan.image_url)}
                     alt={scan.disease_name}
                     className="w-full h-44 object-cover rounded-xl border border-earth-200 mb-3"
-                    onError={(e: any) => {
-                      e.target.src = '/demo_samples/paddy_blast.jpg';
-                    }}
                   />
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-bold text-xs text-forest-900">{scan.crop_name}</span>

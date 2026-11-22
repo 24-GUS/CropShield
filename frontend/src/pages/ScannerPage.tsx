@@ -136,12 +136,16 @@ export const ScannerPage: React.FC = () => {
 
       if (res.status === 'uncertain') {
         // Navigate to result page showing scientific uncertainty & abstention notice
-        navigate(`/diagnosis/${res.scan_id}`);
+        navigate(`/diagnosis/${res.scan_id}`, {
+          state: { previewUrl, scanResult: res }
+        });
         return;
       }
 
       // Successful diagnosis
-      navigate(`/diagnosis/${res.scan_id}`);
+      navigate(`/diagnosis/${res.scan_id}`, {
+        state: { previewUrl, scanResult: res }
+      });
     } catch (err: any) {
       setScanError(err.message || 'Error occurred during AI analysis. Please retry.');
     } finally {

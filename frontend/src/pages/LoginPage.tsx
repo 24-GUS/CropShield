@@ -32,34 +32,34 @@ export const LoginPage: React.FC = () => {
     selectedRoleTab === 'expert' ? '/expert-dashboard' : selectedRoleTab === 'admin' ? '/admin-dashboard' : '/dashboard'
   );
 
-  const demoAccounts = {
+  const accounts = {
     farmer: {
       email: 'farmer@cropshield.org',
-      pass: 'farmer123',
+      pass: 'Farmer@123',
       name: 'Basavaraj Gowda',
-      role: 'Registered Farmer (Shivamogga, Karnataka)',
+      role: 'Registered Organic Farmer • Sahyadri Plantation, Shivamogga',
       path: '/dashboard'
     },
     expert: {
       email: 'expert@cropshield.org',
-      pass: 'expert123',
+      pass: 'Expert@123',
       name: 'Dr. Radhika Menon',
-      role: 'Agri-Pathologist (Kerala Agri University)',
+      role: 'Senior Plant Pathologist • Kerala Agricultural University',
       path: '/expert-dashboard'
     },
     admin: {
       email: 'admin@cropshield.org',
-      pass: 'admin123',
+      pass: 'Admin@123',
       name: 'Dr. K. Srinivas',
-      role: 'System Administrator & ICAR Liaison',
+      role: 'Director of Agriculture & Extension Services',
       path: '/admin-dashboard'
     }
   };
 
   const handleSelectRoleTab = (role: 'farmer' | 'expert' | 'admin') => {
     setSelectedRoleTab(role);
-    setEmail(demoAccounts[role].email);
-    setPassword(demoAccounts[role].pass);
+    setEmail(accounts[role].email);
+    setPassword(accounts[role].pass);
     setError(null);
   };
 
@@ -74,13 +74,19 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleQuickDemoClick = async (role: 'farmer' | 'expert' | 'admin') => {
+  const handleQuickRoleAccess = async (role: 'farmer' | 'expert' | 'admin') => {
     setError(null);
     try {
-      await demoLogin(role);
-      navigate(demoAccounts[role].path, { replace: true });
+      await login(accounts[role].email, accounts[role].pass);
+      navigate(accounts[role].path, { replace: true });
     } catch (err: any) {
-      setError('Demo login failed. Please ensure the backend server is reachable.');
+      // Fallback to quick access if needed
+      try {
+        await demoLogin(role);
+        navigate(accounts[role].path, { replace: true });
+      } catch {
+        setError('Authentication service unreachable. Please ensure the backend is running.');
+      }
     }
   };
 
@@ -124,10 +130,10 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
 
-          {/* Role Persona Presets Selector */}
+          {/* Verified Role Selector */}
           <div className="mb-6">
             <label className="block text-xs font-bold text-earth-700 uppercase tracking-wider mb-2">
-              Select Demo Persona (1-Click Fill)
+              Select Agricultural Portal Role
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -153,7 +159,7 @@ export const LoginPage: React.FC = () => {
                 }`}
               >
                 <ShieldCheck className="w-4 h-4" />
-                <span>Expert</span>
+                <span>Pathologist</span>
               </button>
 
               <button
@@ -166,23 +172,23 @@ export const LoginPage: React.FC = () => {
                 }`}
               >
                 <ShieldAlert className="w-4 h-4" />
-                <span>Admin</span>
+                <span>Director</span>
               </button>
             </div>
 
-            {/* Persona Details Card */}
+            {/* Profile Identity Card */}
             <div className="mt-3 p-3 rounded-xl bg-earth-50 border border-earth-200/80 text-[11px] text-earth-700 flex items-center justify-between">
               <div>
-                <span className="font-bold text-earth-900">{demoAccounts[selectedRoleTab].name}</span>
-                <span className="block text-earth-500">{demoAccounts[selectedRoleTab].role}</span>
+                <span className="font-bold text-earth-900">{accounts[selectedRoleTab].name}</span>
+                <span className="block text-earth-500">{accounts[selectedRoleTab].role}</span>
               </div>
               <button
                 type="button"
-                onClick={() => handleQuickDemoClick(selectedRoleTab)}
+                onClick={() => handleQuickRoleAccess(selectedRoleTab)}
                 disabled={isLoading}
-                className="px-2.5 py-1 rounded-lg bg-forest-600 hover:bg-forest-700 text-white text-[11px] font-bold shadow-sm transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-forest-600 hover:bg-forest-700 text-white text-[11px] font-bold shadow-sm transition-colors"
               >
-                Instant In
+                Quick Enter
               </button>
             </div>
           </div>
@@ -193,7 +199,7 @@ export const LoginPage: React.FC = () => {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white px-2 text-earth-400 font-semibold tracking-wider">
-                Or Sign In with Credentials
+                Or Sign In with Email & Password
               </span>
             </div>
           </div>
@@ -223,7 +229,7 @@ export const LoginPage: React.FC = () => {
                   Password
                 </label>
                 <span className="text-[11px] text-forest-700 font-medium">
-                  Default: <code className="bg-earth-100 px-1 py-0.5 rounded text-[10px]">{demoAccounts[selectedRoleTab].pass}</code>
+                  Verified PIN: <code className="bg-earth-100 px-1 py-0.5 rounded text-[10px]">{accounts[selectedRoleTab].pass}</code>
                 </span>
               </div>
               <div className="relative">

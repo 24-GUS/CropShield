@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { scansApi, consultationApi, outbreakApi } from '../services/api';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { scansApi, consultationApi, outbreakApi, resolveImageUrl } from '../services/api';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -24,6 +24,8 @@ import {
 
 export const DiagnosisResultPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const passedPreview = (location.state as any)?.previewUrl;
   const { t, language, speak, isSpeaking, stopSpeaking } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -134,11 +136,22 @@ export const DiagnosisResultPage: React.FC = () => {
         <div className="flex items-center gap-2">
           {/* Audio Speech Button */}
           <button
-            onClick={() => speak(`${displayName}. ${displaySymptoms}. ${displayTreatment}`)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-forest-200 bg-forest-50 hover:bg-forest-100 text-forest-800 text-xs font-semibold transition-colors"
+            onClick={() => {
+              if (isSpeaking) {
+                stopSpeaking();
+              } else {
+                speak(`${displayName}. ${displaySymptoms}. ${displayTreatment}`);
+              }
+            }}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+              isSpeaking
+                ? 'bg-amber-100 border-amber-300 text-amber-900 ring-2 ring-amber-400 shadow-sm'
+                : 'border-forest-200 bg-forest-50 hover:bg-forest-100 text-forest-800'
+            }`}
+            title={isSpeaking ? "Click to stop voice playback" : "Listen to diagnosis, symptoms, and treatment instructions aloud"}
           >
-            <Volume2 className="w-4 h-4 text-forest-600" />
-            <span>{isSpeaking ? 'Playing Voice...' : 'Listen in Audio'}</span>
+            <Volume2 className={`w-4 h-4 ${isSpeaking ? 'text-amber-700 animate-pulse' : 'text-forest-600'}`} />
+            <span>{isSpeaking ? 'Stop Audio' : 'Listen in Audio'}</span>
           </button>
         </div>
       </div>
@@ -170,6 +183,20 @@ export const DiagnosisResultPage: React.FC = () => {
               {scan.disease_scientific_name && (
                 <p className="text-xs text-leaf-200 italic mt-0.5">{scan.disease_scientific_name}</p>
               )}
+              {scan.pathology_stage && (
+                <div className="flex flex-wrap items-center gap-2 mt-2.5">
+                  <span className="text-[11px] font-bold bg-white/20 text-white px-2.5 py-1 rounded-lg backdrop-blur-xs flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-leaf-300" />
+                    {scan.pathology_stage}
+                  </span>
+                  {scan.treatment_urgency && (
+                    <span className="text-[11px] font-bold bg-amber-400/20 text-amber-200 border border-amber-300/30 px-2.5 py-1 rounded-lg backdrop-blur-xs flex items-center gap-1">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-300" />
+                      {scan.treatment_urgency}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Confidence & Severity Pill */}
@@ -195,11 +222,15 @@ export const DiagnosisResultPage: React.FC = () => {
           <div>
             <div className="rounded-2xl overflow-hidden border border-earth-200 shadow-sm bg-earth-900">
               <img
-                src={scan.image_url}
+                src={passedPreview || resolveImageUrl(scan.image_url)}
                 alt={scan.disease_name}
                 className="w-full h-72 object-contain mx-auto"
                 onError={(e: any) => {
-                  e.target.src = '/demo_samples/paddy_blast.jpg';
+                  // If local preview expired or failed, try resolving the backend image URL
+                  if (scan?.image_url && !e.target.dataset.triedBackend) {
+                    e.target.dataset.triedBackend = 'true';
+                    e.target.src = resolveImageUrl(scan.image_url);
+                  }
                 }}
               />
             </div>

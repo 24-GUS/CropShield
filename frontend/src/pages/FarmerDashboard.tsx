@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { analyticsApi, weatherApi, scansApi } from '../services/api';
+import { analyticsApi, weatherApi, scansApi, resolveImageUrl } from '../services/api';
 import {
   Scan,
   CheckCircle2,
@@ -290,12 +290,9 @@ export const FarmerDashboard: React.FC = () => {
                 >
                   <div className="flex items-center gap-3">
                     <img
-                      src={scan.image_url}
+                      src={resolveImageUrl(scan.image_url)}
                       alt={scan.disease_name}
                       className="w-12 h-12 rounded-xl object-cover border border-earth-200 group-hover:scale-105 transition-transform"
-                      onError={(e: any) => {
-                        e.target.src = '/demo_samples/paddy_blast.jpg';
-                      }}
                     />
                     <div>
                       <div className="flex items-center gap-2">

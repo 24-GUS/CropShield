@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { scansApi, cropsApi } from '../services/api';
+import { scansApi, cropsApi, resolveImageUrl } from '../services/api';
 import { useLanguage } from '../contexts/LanguageContext';
 import { History, Search, ArrowRight, ShieldCheck, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react';
 import { ScanHistoryItem, Crop } from '../types';
@@ -105,12 +105,9 @@ export const ScanHistoryPage: React.FC = () => {
             >
               <div className="flex items-start gap-4">
                 <img
-                  src={scan.image_url}
+                  src={resolveImageUrl(scan.image_url)}
                   alt={scan.disease_name}
                   className="w-20 h-20 rounded-2xl object-cover border border-earth-200 shrink-0 group-hover:scale-105 transition-transform"
-                  onError={(e: any) => {
-                    e.target.src = '/demo_samples/paddy_blast.jpg';
-                  }}
                 />
 
                 <div className="space-y-1 flex-1">

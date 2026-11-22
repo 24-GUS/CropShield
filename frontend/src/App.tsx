@@ -4,7 +4,6 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 
 // Navigation & Global Components
-import { DemoBanner } from './components/DemoBanner';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { MobileNav } from './components/MobileNav';
@@ -43,7 +42,6 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   if (isAuthOrLanding) {
     return (
       <div className="min-h-screen bg-earth-50 flex flex-col selection:bg-forest-200">
-        <DemoBanner />
         {children}
       </div>
     );
@@ -51,9 +49,6 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-earth-50 flex flex-col selection:bg-forest-200">
-      {/* 1-Click Hackathon Evaluator Banner */}
-      <DemoBanner />
-
       {/* Main App Navbar */}
       <Navbar
         onOpenVoice={() => setVoiceOpen(true)}
